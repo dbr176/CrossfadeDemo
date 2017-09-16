@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">CrossfadeDemo</string>
+    <string name="buttonPlayText">Play</string>
+    <string name="buttonTrack1Text">Choose track 1...</string>
+    <string name="buttonTrack2Text">Choose track 2...</string>
+    <string name="crossfadeTextView">Crossfade</string>
+    <string name="secondsText">Seconds</string>
+</resources>
