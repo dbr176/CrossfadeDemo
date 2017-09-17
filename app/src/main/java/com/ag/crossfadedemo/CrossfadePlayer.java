@@ -20,7 +20,6 @@ public class CrossfadePlayer {
     private States mPrevState = States.NONE;
     private States mState = States.NONE;
     private boolean mNeedPause;
-    private int mResumedTracks = 0;
 
     synchronized void setState(States state) {
         mState = state;
@@ -44,7 +43,6 @@ public class CrossfadePlayer {
         mPrevState = mState;
         mState = States.PAUSED;
         mNeedPause = false;
-        mResumedTracks = 0;
     }
 
     private class FirstTrackThread extends Thread {
@@ -78,10 +76,9 @@ public class CrossfadePlayer {
                     }
                     // Если трек воспроизводится
                     case PLAYING: {
+                        if (mNeedPause) setPause();
                         if (mPlayerTrack1.getCurrentPosition() > duration - mCrossfadeValue)
                             setState(States.CROSSFADE_STARTED);
-                        if (mNeedPause)
-                            setState(States.PAUSED);
                         break;
                     }
                     // Если началось переключение между треками
@@ -89,6 +86,7 @@ public class CrossfadePlayer {
                         break;
                     }
                     case CROSSFADE: {
+                        if (mNeedPause) setPause();
                         if (!mPlayerTrack1.isPlaying()) {
                             setState(States.CROSSFADE_FINISHED);
                             break;
@@ -96,12 +94,11 @@ public class CrossfadePlayer {
                         timeToFinish = (duration - mPlayerTrack1.getCurrentPosition())
                                 / (float) mCrossfadeValue;
                         mPlayerTrack1.setVolume(timeToFinish, timeToFinish);
-                        if(mNeedPause)
-                            setState(States.PAUSED);
                         break;
                     }
                     case PAUSED: {
                         mPlayerTrack1.pause();
+                        mPlayerTrack2.pause();
                         break;
                     }
                     case STOPPED: {
@@ -112,10 +109,10 @@ public class CrossfadePlayer {
                     case RESUMING: {
                         mState = mPrevState;
                         mPlayerTrack1.start();
-                        mPlayerTrack2.start();
+                        if (mPrevState == States.CROSSFADE)
+                            mPlayerTrack2.start();
                     }
                 }
-            //mStreamFlag = !mStreamFlag;
             }
         }
     }
@@ -169,7 +166,8 @@ public class CrossfadePlayer {
                     case RESUMING: {
                         mState = mPrevState;
                         mPlayerTrack1.start();
-                        mPlayerTrack2.start();
+                        if (mPrevState == States.CROSSFADE)
+                            mPlayerTrack2.start();
                     }
                 }
             }
@@ -200,15 +198,15 @@ public class CrossfadePlayer {
             mTrack2Thread = new SecondTrackThread(this);
 
             mPlaying = true;
-            mState = States.STARTED;
+            setState(States.STARTED);
 
             mTrack1Thread.start();
             mTrack2Thread.start();
         }
     }
 
-    public void continuePlay() {
-        mState = mPrevState;
+    public void resume() {
+        setState(States.RESUMING);
     }
 
     public void stop() {

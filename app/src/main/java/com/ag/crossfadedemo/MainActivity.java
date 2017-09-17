@@ -12,7 +12,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.nio.charset.Charset;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -127,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
             crossfadeSeekBar.setActivated(false);
             if (mTrack1 != null & mTrack2 != null) {
                 mPlayer = new CrossfadePlayer(1000 * getCrossfadeValue(), mTrack1, mTrack2);
+
                 mPlayer.start();
             }
             else {
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
             if (mPlayer.isPaused()) {
-                mPlayer.continuePlay();
+                mPlayer.resume();
                 mPlayer.mCrossfadeValue = getCrossfadeValue();
             }
             else
