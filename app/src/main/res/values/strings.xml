@@ -6,4 +6,5 @@
     <string name="crossfadeTextView">Crossfade</string>
     <string name="secondsText">Seconds</string>
     <string name="selectFileText">Select a file</string>
+    <string name="filesNotSelectedText">You didn\'t select a file</string>
 </resources>

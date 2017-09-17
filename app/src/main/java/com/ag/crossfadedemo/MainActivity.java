@@ -121,16 +121,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onPlayButtonClick(View view) {
+
         if (mPlayer == null || !mPlayer.isPlaying()) {
             View crossfadeSeekBar = findViewById(R.id.seekBarCrossfadeValue);
             crossfadeSeekBar.setActivated(false);
             if (mTrack1 != null & mTrack2 != null) {
-                mPlayer = new CrossfadePlayer(getCrossfadeValue(), mTrack1, mTrack2);
+                mPlayer = new CrossfadePlayer(1000 * getCrossfadeValue(), mTrack1, mTrack2);
                 mPlayer.start();
+            }
+            else {
+                mToast = Toast.makeText(getApplicationContext(),
+                        R.string.filesNotSelectedText,
+                        Toast.LENGTH_SHORT);
+                mToast.show();
             }
         }
         else {
-            mPlayer.pause();
+            if (mPlayer.isPaused()) {
+                mPlayer.continuePlay();
+                mPlayer.mCrossfadeValue = getCrossfadeValue();
+            }
+            else
+                mPlayer.pause();
         }
     }
 }
