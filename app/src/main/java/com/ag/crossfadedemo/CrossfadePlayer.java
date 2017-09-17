@@ -1,17 +1,14 @@
 package com.ag.crossfadedemo;
 
 import android.media.MediaPlayer;
-import android.util.Log;
 
 import java.lang.Thread;
-import java.util.concurrent.ThreadPoolExecutor;
 
 public class CrossfadePlayer {
     MediaPlayer mPlayerTrack1;
     MediaPlayer mPlayerTrack2;
 
-    Thread mTrack1Thread;
-    Thread mTrack2Thread;
+    Thread mControlThread;
 
     int mCrossfadeValue;
 
@@ -45,91 +42,22 @@ public class CrossfadePlayer {
         mNeedPause = false;
     }
 
-    private class FirstTrackThread extends Thread {
+    private class CrossfadeStateThread extends Thread {
         CrossfadePlayer mParent;
 
-        public FirstTrackThread(CrossfadePlayer player) {
+        public CrossfadeStateThread(CrossfadePlayer player) {
             mParent = player;
         }
 
         public void run() {
-            int duration = 0;
+            int duration1 = 0;
+            int duration2 = 0;
             float timeToFinish = 1;
-
-            while (true) {
-                switch (mState) {
-                    // При переключении треков
-                    case TRACK_SWAP_FINISHED: {
-                        duration = mPlayerTrack1.getDuration();
-                        timeToFinish = 1;
-                        setState(States.PLAYING);
-                        break;
-                    }
-                    // Если воспроизведение только началось
-                    case STARTED: {
-                        mPlayerTrack1.setVolume(1, 1);
-                        duration = mPlayerTrack1.getDuration();
-                        mPlayerTrack1.start();
-
-                        setState(States.PLAYING);
-                        break;
-                    }
-                    // Если трек воспроизводится
-                    case PLAYING: {
-                        if (mNeedPause) setPause();
-                        if (mPlayerTrack1.getCurrentPosition() > duration - mCrossfadeValue)
-                            setState(States.CROSSFADE_STARTED);
-                        break;
-                    }
-                    // Если началось переключение между треками
-                    case CROSSFADE_STARTED: {
-                        break;
-                    }
-                    case CROSSFADE: {
-                        if (mNeedPause) setPause();
-                        if (!mPlayerTrack1.isPlaying()) {
-                            setState(States.CROSSFADE_FINISHED);
-                            break;
-                        }
-                        timeToFinish = (duration - mPlayerTrack1.getCurrentPosition())
-                                / (float) mCrossfadeValue;
-                        mPlayerTrack1.setVolume(timeToFinish, timeToFinish);
-                        break;
-                    }
-                    case PAUSED: {
-                        mPlayerTrack1.pause();
-                        mPlayerTrack2.pause();
-                        break;
-                    }
-                    case STOPPED: {
-                        mPlayerTrack1.stop();
-                        mPlayerTrack1.seekTo(0);
-                        break;
-                    }
-                    case RESUMING: {
-                        mState = mPrevState;
-                        mPlayerTrack1.start();
-                        if (mPrevState == States.CROSSFADE)
-                            mPlayerTrack2.start();
-                    }
-                }
-            }
-        }
-    }
-
-    private class SecondTrackThread extends Thread {
-        CrossfadePlayer mParent;
-
-        public SecondTrackThread(CrossfadePlayer player) {
-            mParent = player;
-        }
-
-        public void run() {
-            int duration = 0;
             float timeFromStart = 0.0f;
 
             while (true) {
                 switch (mState) {
+                    // Смена треков
                     case TRACK_SWAP_STARTED: {
                         //mPlayerTrack1.reset();
                         mPlayerTrack1.seekTo(0);
@@ -141,8 +69,32 @@ public class CrossfadePlayer {
                         setState(States.TRACK_SWAP_FINISHED);
                         break;
                     }
+                    // При завершении переключения треков
+                    case TRACK_SWAP_FINISHED: {
+                        duration1 = mPlayerTrack1.getDuration();
+                        timeToFinish = 1;
+                        setState(States.PLAYING);
+                        break;
+                    }
+                    // Если воспроизведение только началось
+                    case STARTED: {
+                        mPlayerTrack1.setVolume(1, 1);
+                        duration1 = mPlayerTrack1.getDuration();
+                        mPlayerTrack1.start();
+
+                        setState(States.PLAYING);
+                        break;
+                    }
+                    // Если трек воспроизводится
+                    case PLAYING: {
+                        if (mNeedPause) setPause();
+                        if (mPlayerTrack1.getCurrentPosition() > duration1 - mCrossfadeValue)
+                            setState(States.CROSSFADE_STARTED);
+                        break;
+                    }
+                    // Если началось переключение между треками
                     case CROSSFADE_STARTED: {
-                        duration = mPlayerTrack2.getDuration();
+                        duration2 = mPlayerTrack2.getDuration();
                         mPlayerTrack2.seekTo(0);
                         mPlayerTrack2.start();
                         mPlayerTrack2.setVolume(0f, 0f);
@@ -150,6 +102,14 @@ public class CrossfadePlayer {
                         break;
                     }
                     case CROSSFADE: {
+                        if (mNeedPause) setPause();
+                        if (!mPlayerTrack1.isPlaying()) {
+                            setState(States.CROSSFADE_FINISHED);
+                            break;
+                        }
+                        timeToFinish = (duration1 - mPlayerTrack1.getCurrentPosition())
+                                / (float) mCrossfadeValue;
+                        mPlayerTrack1.setVolume(timeToFinish, timeToFinish);
                         timeFromStart = Math.max(0f,
                                 mPlayerTrack2.getCurrentPosition() / (float) mCrossfadeValue);
                         mPlayerTrack2.setVolume(timeFromStart, timeFromStart);
@@ -159,9 +119,17 @@ public class CrossfadePlayer {
                         setState(States.TRACK_SWAP_STARTED);
                         break;
                     }
+                    case PAUSED: {
+                        mPlayerTrack1.pause();
+                        mPlayerTrack2.pause();
+                        break;
+                    }
                     case STOPPED: {
+                        mPlayerTrack1.stop();
+                        mPlayerTrack1.seekTo(0);
                         mPlayerTrack2.stop();
                         mPlayerTrack2.seekTo(0);
+                        break;
                     }
                     case RESUMING: {
                         mState = mPrevState;
@@ -194,14 +162,12 @@ public class CrossfadePlayer {
 
     public void start() {
         if (mState == States.STOPPED || mState == States.NONE) {
-            mTrack1Thread = new FirstTrackThread(this);
-            mTrack2Thread = new SecondTrackThread(this);
+            mControlThread = new CrossfadeStateThread(this);
 
             mPlaying = true;
             setState(States.STARTED);
 
-            mTrack1Thread.start();
-            mTrack2Thread.start();
+            mControlThread.start();
         }
     }
 
