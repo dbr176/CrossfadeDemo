@@ -71,25 +71,35 @@ public class MainActivity extends AppCompatActivity {
         return MediaPlayer.create(getApplicationContext(), uri);
     }
 
+    private void chooseTrack(int requestCode) {
+        Intent intent = new Intent()
+                .setType("*/*")
+                .setAction(Intent.ACTION_GET_CONTENT);
+
+        startActivityForResult(Intent.createChooser(
+                intent,
+                getString(R.string.selectFileText)),
+                requestCode);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==CHOOSE_TRACK1_REQUEST_CODE && resultCode==RESULT_OK) {
+        if((requestCode == CHOOSE_TRACK1_REQUEST_CODE || requestCode == CHOOSE_TRACK2_REQUEST_CODE)
+                && resultCode == RESULT_OK) {
             Uri uri = data.getData();
-            mTrack1 = onActivityResultTracks(uri);
-
             DocumentFile file = DocumentFile.fromSingleUri(getApplicationContext(), uri);
+            Button button;
 
-            Button button = (Button)findViewById(R.id.buttonTrack1);
-            button.setText(file.getName());
-        }
-        if(requestCode==CHOOSE_TRACK2_REQUEST_CODE && resultCode==RESULT_OK) {
-            Uri uri = data.getData();
-            mTrack2 = onActivityResultTracks(uri);
+            if (requestCode == CHOOSE_TRACK1_REQUEST_CODE) {
+                mTrack1 = onActivityResultTracks(uri);
+                button = (Button)findViewById(R.id.buttonTrack1);
+            }
+            else {
+                mTrack2 = onActivityResultTracks(uri);
+                button = (Button)findViewById(R.id.buttonChooseTrack2);
+            }
 
-            DocumentFile file = DocumentFile.fromSingleUri(getApplicationContext(), uri);
-
-            Button button = (Button)findViewById(R.id.buttonChooseTrack2);
             button.setText(file.getName());
         }
     }
@@ -104,12 +114,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onButtonChooseTrack2Click(View view) {
-        Intent intent = new Intent()
-                .setType("*/*")
-                .setAction(Intent.ACTION_GET_CONTENT);
-
-        startActivityForResult(Intent.createChooser(intent, getString(R.string.selectFileText)),
-                CHOOSE_TRACK2_REQUEST_CODE); // перенести в ресурс
+        chooseTrack(CHOOSE_TRACK2_REQUEST_CODE);
+    }
+    public void onButtonChooseTrack1Click(View view) {
+        chooseTrack(CHOOSE_TRACK1_REQUEST_CODE);
     }
 
     public void onPlayButtonClick(View view) {
@@ -124,15 +132,5 @@ public class MainActivity extends AppCompatActivity {
         else {
             mPlayer.pause();
         }
-
-    }
-
-    public void onButtonChooseTrack1Click(View view) {
-        Intent intent = new Intent()
-                .setType("*/*")
-                .setAction(Intent.ACTION_GET_CONTENT);
-
-        startActivityForResult(Intent.createChooser(intent, getString(R.string.selectFileText)),
-                CHOOSE_TRACK1_REQUEST_CODE); // перенести в ресурс
     }
 }
