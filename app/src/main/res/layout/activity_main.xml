@@ -11,20 +11,20 @@
     <SeekBar
         android:id="@+id/seekBarCrossfadeValue"
         style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="334dp"
+        android:layout_width="match_parent"
         android:layout_height="20dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="9dp"
         android:max="8"
         android:progress="0"
-        android:layout_marginTop="9dp"
-        app:layout_constraintTop_toBottomOf="@+id/crossfadeInfoTextView"
-        android:layout_marginRight="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/crossfadeInfoTextView" />
 
     <Button
         android:id="@+id/buttonTrack1"
-        android:layout_width="368dp"
+        android:layout_width="match_parent"
         android:layout_height="58dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
@@ -39,7 +39,7 @@
 
     <Button
         android:id="@+id/buttonChooseTrack2"
-        android:layout_width="368dp"
+        android:layout_width="match_parent"
         android:layout_height="54dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
@@ -54,7 +54,7 @@
 
     <ImageButton
         android:id="@+id/buttonPlay"
-        android:layout_width="359dp"
+        android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
@@ -72,7 +72,7 @@
 
     <TextView
         android:id="@+id/crossfadeInfoTextView"
-        android:layout_width="207dp"
+        android:layout_width="match_parent"
         android:layout_height="24dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
@@ -87,15 +87,15 @@
 
     <TextView
         android:id="@+id/crossfadeTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
         android:text="2 sec"
         android:textAlignment="center"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/seekBarCrossfadeValue"
-        android:layout_marginRight="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/seekBarCrossfadeValue" />
 
 </android.support.constraint.ConstraintLayout>
