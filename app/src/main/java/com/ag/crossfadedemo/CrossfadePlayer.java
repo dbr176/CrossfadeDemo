@@ -19,7 +19,9 @@ public final class CrossfadePlayer {
     private States mPrevState = States.NONE;
     private States mState = States.NONE;
     private boolean mNeedPause;
+    private boolean mNeedClose;
     private int mNewCrossfadeValue = DONT_UPDATE_CROSSFADE_VALUE;
+
 
     synchronized void setState(States state) {
         mState = state;
@@ -40,13 +42,19 @@ public final class CrossfadePlayer {
         PLAYING,
         CROSSFADE_FINISHED,
         TRACK_SWAP_STARTED,
-        TRACK_SWAP_FINISHED
+        TRACK_SWAP_FINISHED,
+        CLOSED
     }
 
     private void setPause() {
         mPrevState = mState;
         mState = States.PAUSED;
         mNeedPause = false;
+    }
+
+    private void _close() {
+        mState = States.CLOSED;
+        mPlaying = false;
     }
 
     private class CrossfadeStateThread extends Thread {
@@ -63,6 +71,11 @@ public final class CrossfadePlayer {
             float timeFromStart = 0.0f;
 
             while (true) {
+                if(mNeedClose) {
+                    _close();
+                    return;
+                }
+
                 switch (mState) {
                     // Смена треков
                     case TRACK_SWAP_STARTED: {
@@ -184,6 +197,10 @@ public final class CrossfadePlayer {
 
     public void resume() {
         setState(States.RESUMING);
+    }
+
+    public void close() {
+        mNeedClose = true;
     }
 
     public void stop() {

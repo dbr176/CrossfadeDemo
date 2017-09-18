@@ -14,13 +14,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
+    private class UpdatePlayButton extends TimerTask {
+        public void run() {
+            if(mPlayer != null)
+                switchPlayPause(!mPlayer.isPaused());
+        }
+    }
+
     private static final int CROSSFADE_MIN_VALUE = 2;
     private static final int CHOOSE_TRACK1_REQUEST_CODE = 771;
     private static final int CHOOSE_TRACK2_REQUEST_CODE = 772;
 
     private Toast mToast;
+    private Timer mTimer;
+    private Thread mCheckPlayerThread;
 
     private CharSequence mSecondsText;
     private MediaPlayer mTrack1;
@@ -111,6 +122,9 @@ public class MainActivity extends AppCompatActivity {
 
         mSecondsText = getString(R.string.secondsText);
         initCrossfadeSeekBar();
+
+        mTimer = new Timer();
+        mTimer.schedule(new UpdatePlayButton(), 0, 2);
     }
 
     public void onButtonChooseTrack2Click(View view) {
@@ -123,7 +137,8 @@ public class MainActivity extends AppCompatActivity {
     private void switchPlayPause(boolean toPause) {
         ImageButton playButton = (ImageButton)findViewById(R.id.buttonPlay);
         SeekBar crossfadeSeekBar = (SeekBar)findViewById(R.id.seekBarCrossfadeValue);
-        if(mPlayer == null) return;
+
+        if(mPlayer != null)
         if(toPause) {
             playButton.setImageResource(android.R.drawable.ic_media_pause);
             crossfadeSeekBar.setEnabled(false);
@@ -142,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
             if (mTrack1 != null & mTrack2 != null) {
                 mPlayer = new CrossfadePlayer(1000 * getCrossfadeValue(), mTrack1, mTrack2);
                 mPlayer.start();
-                switchPlayPause(true);
+                switchPlayPause(false);
             }
             else {
                 mToast = Toast.makeText(getApplicationContext(),
@@ -155,11 +170,11 @@ public class MainActivity extends AppCompatActivity {
             if (mPlayer.isPaused()) {
                 mPlayer.resume();
                 mPlayer.mCrossfadeValue = getCrossfadeValue();
-                switchPlayPause(false);
+                switchPlayPause(true);
             }
             else {
                 mPlayer.pause();
-                switchPlayPause(true);
+                switchPlayPause(false);
                 mPlayer.updateCrossfadeValue(getCrossfadeValue());
             }
         }
