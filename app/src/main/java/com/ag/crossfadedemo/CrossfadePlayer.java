@@ -4,7 +4,9 @@ import android.media.MediaPlayer;
 
 import java.lang.Thread;
 
-public class CrossfadePlayer {
+public final class CrossfadePlayer {
+    private final static int DONT_UPDATE_CROSSFADE_VALUE = -1;
+
     MediaPlayer mPlayerTrack1;
     MediaPlayer mPlayerTrack2;
 
@@ -17,9 +19,14 @@ public class CrossfadePlayer {
     private States mPrevState = States.NONE;
     private States mState = States.NONE;
     private boolean mNeedPause;
+    private int mNewCrossfadeValue = DONT_UPDATE_CROSSFADE_VALUE;
 
     synchronized void setState(States state) {
         mState = state;
+    }
+
+    public void updateCrossfadeValue(int crossfadeValue) {
+        mNewCrossfadeValue = crossfadeValue;
     }
 
     private enum States {
@@ -90,6 +97,10 @@ public class CrossfadePlayer {
                         if (mNeedPause) setPause();
                         if (mPlayerTrack1.getCurrentPosition() > duration1 - mCrossfadeValue)
                             setState(States.CROSSFADE_STARTED);
+                        if (mNewCrossfadeValue != DONT_UPDATE_CROSSFADE_VALUE) {
+                            mCrossfadeValue = mNewCrossfadeValue;
+                            mNewCrossfadeValue = DONT_UPDATE_CROSSFADE_VALUE;
+                        }
                         break;
                     }
                     // Если началось переключение между треками
