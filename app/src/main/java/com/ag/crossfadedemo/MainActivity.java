@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void chooseTrack(int requestCode) {
         Intent intent = new Intent()
-                .setType("*/*")
+                .setType("audio/*")
                 .setAction(Intent.ACTION_GET_CONTENT);
 
         startActivityForResult(Intent.createChooser(
