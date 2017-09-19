@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
             }
             else {
                 mTrack2 = onActivityResultTracks(uri);
-                button = (Button)findViewById(R.id.buttonChooseTrack2);
+                button = (Button)findViewById(R.id.buttonTrack2);
             }
 
             button.setText(file.getName());
@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void disableTrackButtons() {
         View trackButton1 = findViewById(R.id.buttonTrack1);
-        View trackButton2 = findViewById(R.id.buttonChooseTrack2);
+        View trackButton2 = findViewById(R.id.buttonTrack2);
 
         trackButton1.setEnabled(false);
         trackButton2.setEnabled(false);
