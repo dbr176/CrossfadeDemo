@@ -50,6 +50,14 @@ public final class CrossfadePlayer {
         mNeedPause = false;
     }
 
+    private float calcVolumeAscending(int position) {
+        return Math.min(1.0f, position / (float)mCrossfadeValue);
+    }
+
+    private float calcVolumeDescending(int duration, int position) {
+        return Math.min(1.0f, (duration - position) / (float)mCrossfadeValue);
+    }
+
     private void _close() {
         mState = States.CLOSED;
         mPlaying = false;
@@ -65,8 +73,6 @@ public final class CrossfadePlayer {
         public void run() {
             int duration1 = 0;
             int duration2 = 0;
-            float timeToFinish = 1;
-            float timeFromStart = 0.0f;
 
             while (true) {
                 if(mNeedClose) {
@@ -83,7 +89,6 @@ public final class CrossfadePlayer {
                         mParent.mPlayerTrack2 = temp;
 
                         duration1 = mPlayerTrack1.getDuration();
-                        timeToFinish = 1;
                         setState(States.PLAYING);
                         break;
                     }
@@ -123,13 +128,13 @@ public final class CrossfadePlayer {
                             break;
                         }
 
-                        timeToFinish = (duration1 - mPlayerTrack1.getCurrentPosition())
-                                / (float) mCrossfadeValue;
-                        mPlayerTrack1.setVolume(timeToFinish, timeToFinish);
+                        float track1Volume =
+                                calcVolumeDescending(duration1, mPlayerTrack1.getCurrentPosition());
+                        mPlayerTrack1.setVolume(track1Volume, track1Volume);
 
-                        timeFromStart = Math.max(0f,
-                                mPlayerTrack2.getCurrentPosition() / (float) mCrossfadeValue);
-                        mPlayerTrack2.setVolume(timeFromStart, timeFromStart);
+                        float track2Volume =
+                                calcVolumeAscending(mPlayerTrack2.getCurrentPosition());
+                        mPlayerTrack2.setVolume(track2Volume, track2Volume);
 
                         break;
                     }
