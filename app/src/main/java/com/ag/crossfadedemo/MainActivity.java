@@ -20,8 +20,12 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity {
     private class UpdatePlayButton extends TimerTask {
         public void run() {
-            if(mPlayer != null)
-                switchPlayPause(!mPlayer.isPaused());
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(mPlayer != null) switchPlayPause(!mPlayer.isPaused());
+                }
+            });
         }
     }
 
