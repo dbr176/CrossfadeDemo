@@ -11,7 +11,7 @@
     <SeekBar
         android:id="@+id/seekBarCrossfadeValue"
         style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="20dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
@@ -20,11 +20,13 @@
         android:progress="0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/crossfadeInfoTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/crossfadeInfoTextView"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp" />
 
     <Button
         android:id="@+id/buttonTrack1"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="58dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
@@ -35,11 +37,13 @@
         android:textColor="?android:attr/textColorPrimaryInverse"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp" />
 
     <Button
         android:id="@+id/buttonChooseTrack2"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="54dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
@@ -50,11 +54,13 @@
         android:textColor="?android:attr/textColorPrimaryInverse"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonTrack1" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonTrack1"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp" />
 
     <ImageButton
         android:id="@+id/buttonPlay"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
@@ -68,11 +74,13 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/crossfadeTextView"
         app:layout_constraintVertical_bias="0.491"
-        app:srcCompat="@android:drawable/ic_media_play" />
+        app:srcCompat="@android:drawable/ic_media_play"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp" />
 
     <TextView
         android:id="@+id/crossfadeInfoTextView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="24dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
@@ -83,11 +91,13 @@
         app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonChooseTrack2" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonChooseTrack2"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp" />
 
     <TextView
         android:id="@+id/crossfadeTextView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
@@ -96,6 +106,8 @@
         android:textAlignment="center"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seekBarCrossfadeValue" />
+        app:layout_constraintTop_toBottomOf="@+id/seekBarCrossfadeValue"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp" />
 
 </android.support.constraint.ConstraintLayout>

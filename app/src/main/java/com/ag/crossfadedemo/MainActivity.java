@@ -157,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
             if (mTrack1 != null & mTrack2 != null) {
                 mPlayer = new CrossfadePlayer(1000 * getCrossfadeValue(), mTrack1, mTrack2);
                 mPlayer.start();
-                switchPlayPause(false);
             }
             else {
                 mToast = Toast.makeText(getApplicationContext(),
@@ -170,11 +169,9 @@ public class MainActivity extends AppCompatActivity {
             if (mPlayer.isPaused()) {
                 mPlayer.resume();
                 mPlayer.mCrossfadeValue = getCrossfadeValue();
-                switchPlayPause(true);
             }
             else {
                 mPlayer.pause();
-                switchPlayPause(false);
                 mPlayer.updateCrossfadeValue(getCrossfadeValue());
             }
         }
