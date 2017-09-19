@@ -40,9 +40,7 @@ public final class CrossfadePlayer {
         CROSSFADE_STARTED,
         CROSSFADE,
         PLAYING,
-        CROSSFADE_FINISHED,
-        TRACK_SWAP_STARTED,
-        TRACK_SWAP_FINISHED,
+        TRACK_SWAP,
         CLOSED
     }
 
@@ -77,20 +75,13 @@ public final class CrossfadePlayer {
                 }
 
                 switch (mState) {
-                    // Смена треков
-                    case TRACK_SWAP_STARTED: {
-                        //mPlayerTrack1.reset();
+                    case TRACK_SWAP: {
                         mPlayerTrack1.seekTo(0);
 
                         MediaPlayer temp = mPlayerTrack1;
                         mParent.mPlayerTrack1 = mPlayerTrack2;
                         mParent.mPlayerTrack2 = temp;
 
-                        setState(States.TRACK_SWAP_FINISHED);
-                        break;
-                    }
-                    // При завершении переключения треков
-                    case TRACK_SWAP_FINISHED: {
                         duration1 = mPlayerTrack1.getDuration();
                         timeToFinish = 1;
                         setState(States.PLAYING);
@@ -128,19 +119,18 @@ public final class CrossfadePlayer {
                     case CROSSFADE: {
                         if (mNeedPause) setPause();
                         if (!mPlayerTrack1.isPlaying()) {
-                            setState(States.CROSSFADE_FINISHED);
+                            setState(States.TRACK_SWAP);
                             break;
                         }
+
                         timeToFinish = (duration1 - mPlayerTrack1.getCurrentPosition())
                                 / (float) mCrossfadeValue;
                         mPlayerTrack1.setVolume(timeToFinish, timeToFinish);
+
                         timeFromStart = Math.max(0f,
                                 mPlayerTrack2.getCurrentPosition() / (float) mCrossfadeValue);
                         mPlayerTrack2.setVolume(timeFromStart, timeFromStart);
-                        break;
-                    }
-                    case CROSSFADE_FINISHED: {
-                        setState(States.TRACK_SWAP_STARTED);
+
                         break;
                     }
                     case PAUSED: {
