@@ -191,7 +191,8 @@ public final class CrossfadePlayer {
     }
 
     public void resume() {
-        setState(States.RESUMING);
+        if(mState == States.PAUSED)
+            setState(States.RESUMING);
     }
 
     public void close() {
