@@ -108,14 +108,29 @@ public class MainActivity extends AppCompatActivity {
 
             if (requestCode == CHOOSE_TRACK1_REQUEST_CODE) {
                 mTrack1 = onActivityResultTracks(uri);
-                button = (Button)findViewById(R.id.buttonTrack1);
+                if (mTrack1.getDuration() < getCrossfadeValue() * 1000) {
+                    mToast = Toast.makeText(getApplicationContext(), "Selected file is too short",
+                            Toast.LENGTH_SHORT);
+                    mTrack1 = null;
+                }
+                else {
+                    button = (Button) findViewById(R.id.buttonTrack1);
+                    button.setText(file.getName());
+                }
             }
             else {
                 mTrack2 = onActivityResultTracks(uri);
-                button = (Button)findViewById(R.id.buttonTrack2);
+                if (mTrack2.getDuration() < getCrossfadeValue() * 1000) {
+                    mToast = Toast.makeText(getApplicationContext(), "Selected file is too short",
+                            Toast.LENGTH_SHORT);
+                    mTrack2 = null;
+                }
+                else {
+                    button = (Button) findViewById(R.id.buttonTrack2);
+                    button.setText(file.getName());
+                }
             }
 
-            button.setText(file.getName());
         }
     }
 
