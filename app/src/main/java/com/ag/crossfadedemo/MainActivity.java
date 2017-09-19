@@ -150,6 +150,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void disableTrackButtons() {
+        View trackButton1 = findViewById(R.id.buttonTrack1);
+        View trackButton2 = findViewById(R.id.buttonChooseTrack2);
+
+        trackButton1.setEnabled(false);
+        trackButton2.setEnabled(false);
+    }
+
     public void onPlayButtonClick(View view) {
         if (mPlayer == null || !mPlayer.isPlaying()) {
             View crossfadeSeekBar = findViewById(R.id.seekBarCrossfadeValue);
@@ -157,6 +165,8 @@ public class MainActivity extends AppCompatActivity {
             if (mTrack1 != null & mTrack2 != null) {
                 mPlayer = new CrossfadePlayer(1000 * getCrossfadeValue(), mTrack1, mTrack2);
                 mPlayer.start();
+
+                disableTrackButtons();
             }
             else {
                 mToast = Toast.makeText(getApplicationContext(),
